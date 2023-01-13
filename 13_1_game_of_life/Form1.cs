@@ -64,11 +64,13 @@ namespace _13_1_game_of_life
         int steps = 0;
         private void timer1_Tick(object sender, EventArgs e)
         {
+            data.Add(Count());
             Tick();
             Draw();
             steps++;
-            if(steps == 100)
+            if(steps == 10)
                 timer1.Enabled = false;
+            Save(@"DataOut.txt");
         }
 
         private void generateNew_Click(object sender, EventArgs e)
@@ -102,13 +104,48 @@ namespace _13_1_game_of_life
                         s++;
                     if ((i + 1 < n && j + 1 < m) && (A[i + 1, j + 1] == 1))
                         s++;
-                    if (s % 2 == 0)
-                        M[i, j] = 0;
+                    //if (s % 2 == 0)
+                    //    M[i, j] = 0;
+                    //else
+                    //    M[i, j] = 1;
+                    //if(s > 0)
+                    //    M[i, j] = 1;
+                    if (A[i, j] == 1)
+                    {
+                        if (s < 2)
+                            M[i,j] = 0;
+                        if (s == 2 || s == 3)
+                            M[i, j] = 1;
+                        if (s > 3)
+                            M[i, j] = 0;
+                    }
                     else
-                        M[i, j] = 1;
-                }
+                        {
+                            if (s == 3)
+                            M[i, j] = 1;
+                        }
+                    }
             A = M;
         }
-        
+        private void Save(string fileName)
+        {
+            TextWriter save =  new StreamWriter(fileName);
+            foreach(int i in data)
+            {
+                save.WriteLine(i);
+            }
+            save.Close();
+        }
+        List<int> data = new List<int>();
+
+        public int Count()
+        {
+            int nr = 0;
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < m; j++)
+                    if (A[i, j] == 1)
+                        nr++;
+            return nr;
+        }
     }
 }
